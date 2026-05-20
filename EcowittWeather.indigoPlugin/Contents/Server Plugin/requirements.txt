@@ -1,0 +1,2 @@
+aioecowitt>=2025.9.2
+aiohttp>=3.9.0

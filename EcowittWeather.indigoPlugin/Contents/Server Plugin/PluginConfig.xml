@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PluginConfig>
+	<Field id="listenPort" type="textfield" defaultValue="45000">
+		<Label>Listen Port:</Label>
+		<Description>TCP port the plugin listens on for Ecowitt gateway pushes (default 45000). Must be 1024–65535.</Description>
+	</Field>
+	<Field id="listenPath" type="textfield" defaultValue="/data/report">
+		<Label>Listen Path:</Label>
+		<Description>HTTP path for incoming data (default /data/report). Must start with /.</Description>
+	</Field>
+	<Field id="units" type="menu" defaultValue="imperial">
+		<Label>Display Units:</Label>
+		<Description>Preferred unit system for Indigo device states. When the gateway sends the opposite unit system, values are auto-converted.</Description>
+		<List>
+			<Option value="imperial">Imperial (°F, mph, inHg, in)</Option>
+			<Option value="metric">Metric (°C, km/h, hPa, mm)</Option>
+		</List>
+	</Field>
+	<Field id="separator1" type="separator"/>
+	<Field id="debugLogging" type="checkbox" defaultValue="false">
+		<Label>Enable Debug Logging</Label>
+		<Description>Logs each sensor update individually. Produces high log volume during normal operation.</Description>
+	</Field>
+</PluginConfig>

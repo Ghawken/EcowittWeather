@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Devices>
+	<Device type="custom" id="ecowittGateway">
+		<Name>Ecowitt Gateway Hub</Name>
+		<ConfigUI>
+			<Field id="passkey" type="textfield" defaultValue="">
+				<Label>PASSKEY (leave blank to accept any):</Label>
+				<Description>The PASSKEY value sent by the Ecowitt gateway in every push. Leave blank to accept data from any gateway (useful when you have one gateway).</Description>
+			</Field>
+			<Field id="separator1" type="separator"/>
+			<Field id="infoLabel" type="label">
+				<Label>Gateway model and station type are auto-populated from the first data push received.</Label>
+			</Field>
+		</ConfigUI>
+		<States>
+			<State id="connectionStatus">
+				<ValueType>String</ValueType>
+				<TriggerLabel>Connection Status</TriggerLabel>
+				<ControlPageLabel>Connection Status</ControlPageLabel>
+			</State>
+		</States>
+		<UiDisplayStateId>connectionStatus</UiDisplayStateId>
+	</Device>
+</Devices>
