@@ -572,6 +572,9 @@ class Plugin(indigo.PluginBase):
     # ── Asyncio server ────────────────────────────────────────────────────────
 
     async def _start_server(self, port: int, listen_path: str) -> None:
+        # Normalise path: strip trailing slash so /data/report/ and /data/report
+        # both work regardless of what the user or gateway sends.
+        listen_path = listen_path.rstrip("/") or "/"
         self.ecowitt_server = EcoWittListener(port=port, path=listen_path)
         self.ecowitt_server.new_sensor_cb.append(self._on_new_sensor)
 
