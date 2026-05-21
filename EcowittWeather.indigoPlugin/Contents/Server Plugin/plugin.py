@@ -63,7 +63,7 @@ class IndigoLogHandler(logging.Handler):
 IMPERIAL_VARIANT_KEYS: frozenset[str] = frozenset(
     [
         "tempf", "tempinf", "dewpointf", "dewpointinf",
-        "windchillf", "tempfeelsf", "tf_co2f",
+        "windchillf", "tempfeelsf", "tf_co2",
         "windspeedmph", "windspdmph_avg10m", "windgustmph", "maxdailygust",
         "rainratein", "eventrainin", "hourlyrainin", "dailyrainin",
         "weeklyrainin", "monthlyrainin", "yearlyrainin", "totalrainin",
@@ -75,7 +75,7 @@ IMPERIAL_VARIANT_KEYS: frozenset[str] = frozenset(
         "lightning_mi",
     ]
     + [f"temp{i}f"      for i in range(1, 9)]
-    + [f"tf_ch{i}f"     for i in range(1, 9)]
+    + [f"tf_ch{i}"      for i in range(1, 9)]
     + [f"dewpoint{i}f"  for i in range(1, 9)]
 )
 
@@ -152,6 +152,10 @@ _S: dict[str, tuple[str, str]] = {
     "monthlyrainmm":        ("monthlyRain",          "float"),
     "yearlyrainin":         ("yearlyRain",           "float"),
     "yearlyrainmm":         ("yearlyRain",           "float"),
+    "totalrainin":          ("totalRain",            "float"),
+    "totalrainmm":          ("totalRain",            "float"),
+    "last24hrainin":        ("last24hRain",          "float"),
+    "last24hrainmm":        ("last24hRain",          "float"),
     # ── Rain (WS90 piezoelectric gauge) ──────────────────────────────────────
     "rrain_piezo":          ("rainRatePiezo",        "float"),
     "rrain_piezomm":        ("rainRatePiezo",        "float"),
@@ -187,7 +191,7 @@ _S: dict[str, tuple[str, str]] = {
     "co2in":                ("co2Indoor",            "float"),
     "co2in_24h":            ("co2IndoorAvg24h",      "float"),
     "humi_co2":             ("humiCo2",              "float"),
-    "tf_co2f":              ("tempCo2",              "float"),
+    "tf_co2":               ("tempCo2",              "float"),   # Fahrenheit (no suffix in aioecowitt)
     "tf_co2c":              ("tempCo2",              "float"),
     "pm25_co2":             ("pm25Co2",              "float"),
     "pm25_24h_co2":         ("pm25Co2Avg24h",        "float"),
@@ -220,28 +224,58 @@ _S: dict[str, tuple[str, str]] = {
     "pm25batt2":            ("pm25Batt2",            "float"),
     "pm25batt3":            ("pm25Batt3",            "float"),
     "pm25batt4":            ("pm25Batt4",            "float"),
-    # WS90 supercapacitor voltage (charges from solar, drives the sensor)
+    "pm25batt5":            ("pm25Batt5",            "float"),
+    "pm25batt6":            ("pm25Batt6",            "float"),
+    "pm25batt7":            ("pm25Batt7",            "float"),
+    "pm25batt8":            ("pm25Batt8",            "float"),
+    "co2_batt":             ("battCo2",              "float"),
+    "console_batt":         ("battConsole",          "float"),
+    "wh85batt":             ("battWh85",             "float"),
+    # WS90 / WS85 supercapacitor voltages
     "ws90cap_volt":         ("ws90CapVolt",          "float"),
+    "ws85cap_volt":         ("ws85CapVolt",          "float"),
 }
 
-# Channel-based sensors: channels 1–8
+# Multi-channel temp/humidity sensors (WH31 etc.): channels 1–8
 for _i in range(1, 9):
     _S[f"temp{_i}f"]           = (f"ch{_i}Temp",       "float")
     _S[f"temp{_i}c"]           = (f"ch{_i}Temp",       "float")
     _S[f"humidity{_i}"]        = (f"ch{_i}Humidity",   "float")
     _S[f"dewpoint{_i}f"]       = (f"ch{_i}DewPoint",   "float")
     _S[f"dewpoint{_i}c"]       = (f"ch{_i}DewPoint",   "float")
-    _S[f"soilmoisture{_i}"]    = (f"soilMoisture{_i}", "float")
-    _S[f"tf_ch{_i}f"]          = (f"soilTemp{_i}",     "float")
-    _S[f"tf_ch{_i}c"]          = (f"soilTemp{_i}",     "float")
-    _S[f"leafwetness_ch{_i}"]  = (f"leafWetness{_i}",  "float")
     _S[f"batt{_i}"]            = (f"ch{_i}Battery",    "float")
+    _S[f"leafwetness_ch{_i}"]  = (f"leafWetness{_i}",  "float")
+    _S[f"leaf_batt{_i}"]       = (f"leafBatt{_i}",     "float")
+
+# Soil moisture (WH51): channels 1–16
+for _i in range(1, 17):
+    _S[f"soilmoisture{_i}"]    = (f"soilMoisture{_i}", "float")
+    _S[f"soilad{_i}"]          = (f"soilAd{_i}",       "float")   # raw ADC value
     _S[f"soilbatt{_i}"]        = (f"soilBatt{_i}",     "float")
 
-# PM2.5 channels 1–4
+# Soil temperature probes (WN34): channels 1–8
+# aioecowitt key is tf_ch{i} (Fahrenheit, no suffix) and tf_ch{i}c (Celsius)
+for _i in range(1, 9):
+    _S[f"tf_ch{_i}"]           = (f"soilTemp{_i}",     "float")
+    _S[f"tf_ch{_i}c"]          = (f"soilTemp{_i}",     "float")
+    _S[f"tf_batt{_i}"]         = (f"soilTempBatt{_i}", "float")
+
+# PM2.5 channels 1–4 (WH41 / WH43)
 for _i in range(1, 5):
     _S[f"pm25_ch{_i}"]          = (f"pm25Ch{_i}",       "float")
     _S[f"pm25_avg_24h_ch{_i}"]  = (f"pm25Ch{_i}Avg24h", "float")
+
+# Leak sensor batteries (WH55): channels 1–4
+for _i in range(1, 5):
+    _S[f"leakbatt{_i}"]        = (f"leakBatt{_i}",     "float")
+
+# LDS (Liquid Detection Sensor): channels 1–4
+for _i in range(1, 5):
+    _S[f"depth_ch{_i}"]        = (f"depth{_i}",        "float")
+    _S[f"thi_ch{_i}"]          = (f"thi{_i}",          "float")
+    _S[f"air_ch{_i}"]          = (f"air{_i}",          "float")
+    _S[f"ldsbatt{_i}"]         = (f"ldsBatt{_i}",      "float")
+    _S[f"ldsheat_ch{_i}"]      = (f"ldsHeat{_i}",      "float")
 
 SENSOR_TO_STATE: dict[str, tuple[str, str]] = _S
 del _S, _i  # type: ignore[name-defined]
@@ -281,6 +315,8 @@ _D: list[tuple[str, str, str]] = [
     ("weeklyRain",          "float",  "Weekly Rain"),
     ("monthlyRain",         "float",  "Monthly Rain"),
     ("yearlyRain",          "float",  "Yearly Rain"),
+    ("totalRain",           "float",  "Total Rain"),
+    ("last24hRain",         "float",  "Last 24h Rain"),
     # ── Rain (WS90 piezoelectric gauge) ──────────────────────────────────────
     ("rainRatePiezo",       "float",  "Rain Rate (Piezo)"),
     ("eventRainPiezo",      "float",  "Event Rain (Piezo)"),
@@ -345,20 +381,55 @@ _D: list[tuple[str, str, str]] = [
     ("pm25Batt2",           "float",  "PM2.5 Sensor 2 Battery"),
     ("pm25Batt3",           "float",  "PM2.5 Sensor 3 Battery"),
     ("pm25Batt4",           "float",  "PM2.5 Sensor 4 Battery"),
+    ("pm25Batt5",           "float",  "PM2.5 Sensor 5 Battery"),
+    ("pm25Batt6",           "float",  "PM2.5 Sensor 6 Battery"),
+    ("pm25Batt7",           "float",  "PM2.5 Sensor 7 Battery"),
+    ("pm25Batt8",           "float",  "PM2.5 Sensor 8 Battery"),
+    ("battCo2",             "float",  "CO2 Sensor Battery"),
+    ("battConsole",         "float",  "Console Battery"),
+    ("battWh85",            "float",  "WH85 Battery"),
     ("ws90CapVolt",         "float",  "WS90 Capacitor Voltage"),
+    ("ws85CapVolt",         "float",  "WS85 Capacitor Voltage"),
 ]
 
-# Channel-based state definitions (1–8)
+# Multi-channel temp/humidity (WH31): channels 1–8
 for _i in range(1, 9):
     _D += [
-        (f"ch{_i}Temp",       "float", f"Channel {_i} Temperature"),
-        (f"ch{_i}Humidity",   "float", f"Channel {_i} Humidity"),
-        (f"ch{_i}DewPoint",   "float", f"Channel {_i} Dew Point"),
-        (f"ch{_i}Battery",    "float", f"Channel {_i} Battery"),
-        (f"soilMoisture{_i}", "float", f"Soil Moisture {_i}"),
-        (f"soilTemp{_i}",     "float", f"Soil Temperature {_i}"),
-        (f"soilBatt{_i}",     "float", f"Soil Battery {_i}"),
-        (f"leafWetness{_i}",  "float", f"Leaf Wetness {_i}"),
+        (f"ch{_i}Temp",         "float", f"Channel {_i} Temperature"),
+        (f"ch{_i}Humidity",     "float", f"Channel {_i} Humidity"),
+        (f"ch{_i}DewPoint",     "float", f"Channel {_i} Dew Point"),
+        (f"ch{_i}Battery",      "float", f"Channel {_i} Battery"),
+        (f"leafWetness{_i}",    "float", f"Leaf Wetness {_i}"),
+        (f"leafBatt{_i}",       "float", f"Leaf Wetness {_i} Battery"),
+    ]
+
+# Soil moisture (WH51): channels 1–16
+for _i in range(1, 17):
+    _D += [
+        (f"soilMoisture{_i}",   "float", f"Soil Moisture {_i}"),
+        (f"soilAd{_i}",         "float", f"Soil ADC {_i}"),
+        (f"soilBatt{_i}",       "float", f"Soil Battery {_i}"),
+    ]
+
+# Soil temperature probes (WN34): channels 1–8
+for _i in range(1, 9):
+    _D += [
+        (f"soilTemp{_i}",       "float", f"Soil Temperature {_i}"),
+        (f"soilTempBatt{_i}",   "float", f"Soil Temp Probe {_i} Battery"),
+    ]
+
+# Leak sensor batteries (WH55): channels 1–4
+for _i in range(1, 5):
+    _D += [(f"leakBatt{_i}",   "float", f"Leak Sensor {_i} Battery")]
+
+# LDS (Liquid Detection Sensor): channels 1–4
+for _i in range(1, 5):
+    _D += [
+        (f"depth{_i}",          "float", f"Depth {_i}"),
+        (f"thi{_i}",            "float", f"THI {_i}"),
+        (f"air{_i}",            "float", f"Air {_i}"),
+        (f"ldsBatt{_i}",        "float", f"LDS {_i} Battery"),
+        (f"ldsHeat{_i}",        "float", f"LDS {_i} Heater"),
     ]
 
 STATE_DEFINITIONS: list[tuple[str, str, str]] = _D
@@ -543,6 +614,29 @@ class Plugin(indigo.PluginBase):
                 self.event_loop.call_soon(self._on_push_received, raw)
 
         self.ecowitt_server.process_data = _patched_process_data
+
+        # Wrap the low-level aiohttp handler so requests arriving at the wrong
+        # path or with an unexpected method are logged in the Indigo log.
+        # EcoWittListener uses web.Server(self.handler) — setting an instance
+        # attribute shadows the class method before start() creates the server.
+        _orig_handler = self.ecowitt_server.handler
+
+        async def _logging_handler(request: Any) -> Any:
+            response = await _orig_handler(request)
+            if response.status == 404:
+                self.logger.error(
+                    f"Unmonitored endpoint: {request.method} {request.path!r} "
+                    f"from {request.remote} — "
+                    f"plugin expects POST to {listen_path!r}"
+                )
+            elif response.status == 405:
+                self.logger.warning(
+                    f"Unexpected HTTP method {request.method!r} at "
+                    f"{request.path!r} from {request.remote}"
+                )
+            return response
+
+        self.ecowitt_server.handler = _logging_handler
         await self.ecowitt_server.start()
 
     # ── Per-push handler (runs in asyncio thread via call_soon) ───────────────
@@ -601,21 +695,21 @@ class Plugin(indigo.PluginBase):
 
     def _on_new_sensor(self, sensor: EcoWittSensor) -> None:
         """Called by aioecowitt the first time a sensor key is seen."""
-        self.logger.info(
-            f"New sensor: {sensor.key!r} ({sensor.name}) "
-            f"from station {sensor.station.key!r}"
-        )
+        if sensor.key not in SYSTEM_SENSOR_KEYS:
+            self.logger.info(
+                f"New sensor: {sensor.key!r} ({sensor.name}) "
+                f"from station {sensor.station.key!r}"
+            )
         sensor.update_cb.append(lambda: self._on_sensor_update(sensor))
 
     def _on_sensor_update(self, sensor: EcoWittSensor) -> None:
         """Called when a sensor value changes. Batches update for _flush_pending."""
-        # Log immediately so we know this callback fired even if something fails below.
-        self.logger.debug(
-            f"_on_sensor_update: {sensor.key!r} = {sensor.value!r}"
-        )
         try:
             if sensor.key in SYSTEM_SENSOR_KEYS:
                 return  # diagnostic field — not a weather measurement
+            self.logger.debug(
+                f"_on_sensor_update: {sensor.key!r} = {sensor.value!r}"
+            )
             if sensor.key not in SENSOR_TO_STATE:
                 if sensor.key not in self._warned_sensors:
                     self._warned_sensors.add(sensor.key)

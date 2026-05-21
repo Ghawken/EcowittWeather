@@ -6,7 +6,7 @@ Receives local weather data from Ecowitt gateways (GW1000, GW2000, GW3000, HP256
 
 ## Requirements
 
-- Indigo 2022.1 or later (API 3.4+)
+- Indigo 2025.2 or later (API 3.4+)
 - An Ecowitt gateway configured to push to this Mac over your local network
 - [`aioecowitt`](https://github.com/home-assistant-libs/aioecowitt) ≥ 2025.9.2 (installed automatically by Indigo from `requirements.txt`)
 
@@ -126,7 +126,7 @@ Create one **Ecowitt Gateway Hub** device per gateway and set the PASSKEY on eac
 
 **No data received**
 - Confirm the gateway is configured for **Ecowitt protocol** (not Wunderground) in WSView Plus.
-- Check the path matches exactly — `/data/report` with no trailing slash.
+- Check the path matches exactly — `/data/report/` with  trailing slash.
 - Run `sudo tcpdump -ni any -A port 45000` to confirm packets are arriving at the Mac.
 
 **States not appearing**
