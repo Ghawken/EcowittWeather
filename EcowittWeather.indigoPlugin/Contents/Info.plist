@@ -13,7 +13,7 @@
 	<key>CFBundleName</key>
 	<string>EcowittWeather</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.community.indigoplugin.ecowittweather</string>
+	<string>com.GlennNZ.indigoplugin.ecowittweather</string>
 	<key>CFBundleVersion</key>
 	<string>1.0.0</string>
 	<key>CFBundleURLTypes</key>
