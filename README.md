@@ -180,4 +180,4 @@ Create one **Ecowitt Gateway Hub** device per gateway and set the PASSKEY on eac
 
 - Uses [`aioecowitt`](https://github.com/home-assistant-libs/aioecowitt) by the Home Assistant team.
 - Dynamic state pattern adapted from [GhostXML](https://github.com/IndigoDomotics/GhostXML) by IndigoDomotics.
-- Plugin by Glenn Hawken for the [Indigo community](https://forums.indigodomo.com/).
+
