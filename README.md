@@ -10,8 +10,25 @@ Receives local weather data from Ecowitt gateways (GW1000, GW2000, GW3000, HP256
 - An Ecowitt gateway configured to push to this Mac over your local network
 - [`aioecowitt`](https://github.com/home-assistant-libs/aioecowitt) ≥ 2025.9.2 (installed automatically by Indigo from `requirements.txt`)
 
+### Ecowitt Gateway/Hubs supported
+GW1200 Wi-Fi Gateway
+GW2000 Ethernet and Wi-Fi Gateway
+GW3000 Ethernet and Wi-Fi Gateway with Data Storage
+
+### Sensors 
+WH51 Wireless Soil Moisture Sensor
+WH40 Wireless Self-emptying Rain Gauge Sensor
+WH57 Outdoor Wireless Lightning Detection Sensor
+WS90 Wireless 7-in-1 Weather Sensor
+
 ---
 
+Creates a EcoWitt Gateway Hub device for each gateway.   This single Indigo device contains all the sensors.
+If new sensors are added - (Gateway supports quite a lot) then the new sensors will be created automatically and appear as a state.
+If sensors are removed (the states remain in the Indigo device but do not update).  If this triggers OCD tendenceies then delete the indigo device and start afresh.
+
+
+---
 ## Installation
 
 1. Download the latest release `.indigoPlugin` file.
@@ -35,9 +52,31 @@ Open **Plugins → Ecowitt Weather Station → Configure…**
 
 ---
 
-## Gateway Setup (WSView Plus)
+# Gateway Setup (WSView Plus)
 
 In the **WSView Plus** app, configure a **Customised** upload server:
+This is in the Web Tab of the Gateway settings, or via the App.
+
+## Option 1: Use the Ecowitt app (on your phone):
+
+In the top-left corner, select the menu icon () and select Devices.
+Under My Devices, select your Ecowitt station.
+In the top-right corner, select the ellipsis icon ().
+From the list, select Others.
+Select the DIY Upload Servers button, and from the Supported Servers List, select Customized.
+From the Protocol Type Same As list, select Ecowitt.
+Enter the Server IP / Host Name, Path, and Port from the integration.
+The path has to match! Remove the first forward slash from the path, as the app will prepend one.
+Save your settings.
+
+## Option 2: Navigate to the Ecowitt web UI in a browser at the station IP address:
+
+Select Weather Services then scroll down to the Customized section.
+Under Customized, select 🔘 Enable and Protocol Type Same As 🔘 Ecowitt.
+Enter the Server IP / Host Name, Path, and Port from the integration.
+Save your settings.
+
+
 
 | Field | Value |
 |---|---|
