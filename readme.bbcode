@@ -1,0 +1,235 @@
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/banner.png?raw=True[/img]
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[b]Ecowitt Weather Station[/b] is an [url=https://www.indigodomo.com]Indigo Domotics[/url] plugin that receives live weather data directly from your Ecowitt gateway over your local network — no cloud, no third-party account required.
+
+[size=150][b]What it does[/b][/size]
+
+The plugin runs a lightweight HTTP server inside Indigo. Your Ecowitt gateway is configured to POST its sensor readings to that server every 16–60 seconds using the [b]Ecowitt local push protocol[/b]. Every reading becomes an Indigo device state, available immediately for use in triggers, schedules, control pages, and scripts.
+
+[list]
+[*][b]No cloud dependency[/b] — data flows directly from gateway to Mac over your LAN
+[*][b]All sensors in one device[/b] — a single [i]Ecowitt Gateway Hub[/i] device holds every state from every sensor attached to that gateway
+[*][b]Dynamic states[/b] — new sensors appear automatically the first time their data is received; you never need to edit XML
+[*][b]Units your way[/b] — choose Imperial or Metric; the plugin picks the right value when aioecowitt provides both
+[*][b]Multiple gateways[/b] — add one Hub device per gateway; each is routed by its unique PASSKEY
+[/list]
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Supported Hardware[/b][/size]
+
+[size=120][b]Gateways / Hubs[/b][/size]
+
+[list]
+[*][b]GW1200[/b] — Wi-Fi Gateway
+[*][b]GW2000[/b] — Ethernet and Wi-Fi Gateway
+[*][b]GW3000[/b] — Ethernet and Wi-Fi Gateway with Data Storage
+[*][b]HP2560 / HP2564[/b] — Console display hubs
+[/list]
+
+Any Ecowitt gateway that supports the [b]Customized / Ecowitt protocol[/b] upload will work.
+
+[size=120][b]Sensors (examples)[/b][/size]
+
+WS90 · WH65 · WH40 · WH57 · WH51 · WH31 · WH55 · WH41 · WH43 · WH45 · WH46 · WN34 · WH80 · WH68 · WH85 · WH25 · WH26
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Requirements[/b][/size]
+
+[list]
+[*][b]Indigo[/b] 2025.2 or later (API 3.4+)
+[*][b]macOS[/b] with Indigo running on the same LAN as the gateway
+[*]An Ecowitt gateway configured to push to this Mac over your local network
+[*][url=https://github.com/home-assistant-libs/aioecowitt]aioecowitt[/url] ≥ 2025.9.2 — installed automatically by Indigo from requirements.txt
+[/list]
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Installation[/b][/size]
+
+[list=1]
+[*]Download the latest release [b].indigoPlugin[/b] file from the [url=https://github.com/Ghawken/EcowittWeather/releases]Releases page[/url].
+[*]Double-click it — Indigo will install the plugin automatically.
+[*]Configure the plugin (see Plugin Configuration below) and create at least one [b]Ecowitt Gateway Hub[/b] device.
+[/list]
+
+Creates an EcoWitt Gateway Hub device for each gateway. This single Indigo device contains all the sensors. If new sensors are added (the gateway supports quite a lot) then the new sensors will be created automatically and appear as a state. If sensors are removed, the states remain in the Indigo device but do not update.
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Plugin Configuration[/b][/size]
+
+Open [b]Plugins → Ecowitt Weather Station → Configure…[/b]
+
+[list]
+[*][b]Listen Port[/b] (default: 45000) — TCP port the plugin's HTTP server listens on. Must be reachable from the gateway.
+[*][b]Listen Path[/b] (default: /data/report/) — URL path the gateway POSTs to. Must match WSView Plus settings exactly.
+[*][b]Units[/b] (default: Imperial) — Preferred unit system. When aioecowitt provides both °F and °C, the preferred variant wins.
+[*][b]Debug Logging[/b] (default: Off) — Logs every push and sensor update to the Indigo log.
+[/list]
+
+[quote]Firewall: macOS may block incoming connections on the listen port. Allow it in [b]System Settings → Network → Firewall[/b] or it will be prompted on first connection.[/quote]
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Gateway Setup[/b][/size]
+
+In the [b]WSView Plus[/b] app, configure a [b]Customised[/b] upload server. This is in the Web Tab of the Gateway settings, or via the app.
+
+[size=120][b]Option 1: Use the Ecowitt app (on your phone)[/b][/size]
+
+[list=1]
+[*]In the top-left corner, select the menu icon and select [b]Devices[/b]
+[*]Under My Devices, select your Ecowitt station
+[*]In the top-right corner, select the ellipsis icon
+[*]From the list, select [b]Others[/b]
+[*]Select the [b]DIY Upload Servers[/b] button, and from the Supported Servers List, select [b]Customized[/b]
+[*]From the [b]Protocol Type Same As[/b] list, select [b]Ecowitt[/b]
+[*]Enter the Server IP / Host Name, Path, and Port
+[*]The path has to match! Remove the first forward slash from the path, as the app will prepend one
+[*]Save your settings
+[/list]
+
+[size=120][b]Option 2: Navigate to the Ecowitt web UI in a browser at the station IP address[/b][/size]
+
+[list=1]
+[*]Select [b]Weather Services[/b] then scroll down to the [b]Customized[/b] section
+[*]Under Customized, select [b]Enable[/b] and [b]Protocol Type Same As: Ecowitt[/b]
+[*]Enter the Server IP / Host Name, Path, and Port
+[*]Save your settings
+[/list]
+
+[b]Required settings:[/b]
+
+[list]
+[*][b]Protocol:[/b] Ecowitt
+[*][b]Server IP / Hostname:[/b] IP address of your Indigo Mac
+[*][b]Path:[/b] /data/report (must match plugin setting)
+[*][b]Port:[/b] 45000 (must match plugin setting)
+[*][b]Upload Interval:[/b] 16 s – 60 s (recommended)
+[/list]
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Device Setup[/b][/size]
+
+Create one [b]Ecowitt Gateway Hub[/b] device per physical gateway:
+
+[list]
+[*][b]PASSKEY[/b] (optional): paste the PASSKEY value your gateway sends. Leave blank to accept data from any gateway — useful when you have a single gateway.
+[/list]
+
+The gateway model and station type are auto-populated from the first push received. All sensor states are created dynamically — a brand-new device has only [b]connectionStatus[/b] until the first push arrives.
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Supported Sensors[/b][/size]
+
+States are created only for sensors your specific gateway and attached sensors actually report. States persist across plugin restarts.
+
+[size=120][b]Gateway metadata[/b][/size]
+connectionStatus · lastUpdate · gatewayModel · stationType
+
+[size=120][b]Outdoor[/b][/size]
+outdoorTemp · outdoorHumidity · dewPoint · feelsLike · windChill
+
+[size=120][b]Indoor[/b][/size]
+indoorTemp · indoorHumidity · indoorDewPoint
+
+[size=120][b]Wind[/b][/size]
+windDirection · windDirAvg10m · windSpeed · windSpeedAvg10m · windGust · maxDailyGust
+
+[size=120][b]Rain (tipping-bucket gauge)[/b][/size]
+rainRate · eventRain · hourlyRain · dailyRain · weeklyRain · monthlyRain · yearlyRain
+
+[size=120][b]Rain (WS90 piezoelectric gauge)[/b][/size]
+rainRatePiezo · eventRainPiezo · hourlyRainPiezo · dailyRainPiezo · weeklyRainPiezo · monthlyRainPiezo · yearlyRainPiezo · last24hRainPiezo · rainStatePiezo
+
+[size=120][b]Pressure[/b][/size]
+pressureRelative · pressureAbsolute
+
+[size=120][b]Solar / UV[/b][/size]
+solarRadiation · solarRadiationLux · uvIndex
+
+[size=120][b]Vapour Pressure Deficit[/b][/size]
+vpd
+
+[size=120][b]CO₂ / Air Quality (WH45 / WH46)[/b][/size]
+co2 · co2Avg24h · co2Indoor · co2IndoorAvg24h · pm25Co2 · pm25Co2Avg24h · pm1Co2 · pm4Co2 · pm10Co2 (+ 24h averages) · humiCo2 · tempCo2
+
+[size=120][b]Lightning (WH57)[/b][/size]
+lightningDist · lightningCount · lightningLastTime
+
+[size=120][b]Leak sensors (WH55)[/b][/size]
+leak1 – leak4
+
+[size=120][b]PM2.5 channels (WH41 / WH43)[/b][/size]
+pm25Ch1 – pm25Ch4 (+ 24h averages)
+
+[size=120][b]Multi-channel temperature/humidity (WH31, WH51 etc.)[/b][/size]
+ch1Temp – ch8Temp · ch1Humidity – ch8Humidity · ch1DewPoint – ch8DewPoint · soilMoisture1 – soilMoisture8 · soilTemp1 – soilTemp8 · leafWetness1 – leafWetness8
+
+[size=120][b]Battery / Power[/b][/size]
+battWh65 · battWh40 · battWh80 · battWh57 · battWh68 · battWh90 · battWh25 · battWh26 · pm25Batt1–pm25Batt4 · ch1Battery–ch8Battery · soilBatt1–soilBatt8 · ws90CapVolt
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Stale Detection[/b][/size]
+
+If no push is received for more than [b]5 minutes[/b], [b]connectionStatus[/b] is set to [b]Stale[/b]. It returns to [b]Connected[/b] on the next push. The check runs every 60 seconds.
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Multiple Gateways[/b][/size]
+
+Create one [b]Ecowitt Gateway Hub[/b] device per gateway and set the PASSKEY on each. Data from each gateway is routed to its matching device. All gateways share the same listen port and path.
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Troubleshooting[/b][/size]
+
+[size=120][b]No data received[/b][/size]
+[list]
+[*]Confirm the gateway is configured for [b]Ecowitt protocol[/b] (not Wunderground) in WSView Plus
+[*]Check the path matches exactly — [b]/data/report/[/b] with trailing slash
+[*]Run the following to confirm packets are arriving at the Mac:
+[code]sudo tcpdump -ni any -A port 45000[/code]
+[/list]
+
+[size=120][b]States not appearing[/b][/size]
+[list]
+[*]Enable [b]Debug Logging[/b] in plugin preferences and reload the plugin. The log will show sensor discovery and state registration.
+[/list]
+
+[size=120][b]"No matching Indigo device" warning[/b][/size]
+[list]
+[*]Create an Ecowitt Gateway Hub device, or if one already exists, check the PASSKEY matches.
+[/list]
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Wiki[/b][/size]
+
+Full documentation is available in the [url=https://github.com/Ghawken/EcowittWeather/wiki]GitHub Wiki[/url]:
+
+[list]
+[*][url=https://github.com/Ghawken/EcowittWeather/wiki/Installation]Installation[/url] — Download, install, and first launch
+[*][url=https://github.com/Ghawken/EcowittWeather/wiki/Plugin-Configuration]Plugin Configuration[/url] — Port, path, units, debug logging
+[*][url=https://github.com/Ghawken/EcowittWeather/wiki/Ecowitt-Gateway-Setup]Ecowitt Gateway Setup[/url] — App and web UI methods, per-model and per-sensor notes
+[*][url=https://github.com/Ghawken/EcowittWeather/wiki/Device-Setup]Device Setup[/url] — Hub devices, PASSKEY routing, multiple gateways
+[*][url=https://github.com/Ghawken/EcowittWeather/wiki/Sensor-States-Reference]Sensor States Reference[/url] — Complete list of all states by sensor category
+[*][url=https://github.com/Ghawken/EcowittWeather/wiki/Code-Architecture]Code Architecture[/url] — asyncio, dynamic states, unit priority system
+[*][url=https://github.com/Ghawken/EcowittWeather/wiki/Troubleshooting]Troubleshooting[/url] — Common problems and diagnostic steps
+[/list]
+
+[img]https://raw.githubusercontent.com/Ghawken/EcowittWeather/main/Images/weather_divider_top_animated.gif?raw=True[/img]
+
+[size=150][b]Credits[/b][/size]
+
+[list]
+[*]Uses [url=https://github.com/home-assistant-libs/aioecowitt]aioecowitt[/url] by the Home Assistant team.
+[*]Dynamic state pattern adapted from [url=https://github.com/IndigoDomotics/GhostXML]GhostXML[/url] by IndigoDomotics.
+[/list]
