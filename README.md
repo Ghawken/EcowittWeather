@@ -37,15 +37,14 @@ WS90 · WH65 · WH40 · WH57 · WH51 · WH31 · WH55 · WH41 · WH43 · WH45 · 
 
 ## Wiki Pages
 
-| Page | Description |
-|---|---|
-| [Installation](Installation) | Download, install, and first launch |
-| [Plugin Configuration](Plugin-Configuration) | Port, path, units, debug logging |
-| [Ecowitt Gateway Setup](Ecowitt-Gateway-Setup) | Configure your gateway to push data — app and web UI methods, per-model notes |
-| [Device Setup](Device-Setup) | Creating Hub devices, PASSKEY routing, multiple gateways |
-| [Sensor States Reference](Sensor-States-Reference) | Complete list of all states by sensor category |
-| [Code Architecture](Code-Architecture) | How the plugin works — asyncio, dynamic states, unit priority |
-| [Troubleshooting](Troubleshooting) | Common problems and diagnostic steps |
+| Page                  | Description |
+|-----------------------|---|
+| [Installation](https://github.com/Ghawken/EcowittWeather/wiki/Installation) | Download, install, and first launch |
+| [Ecowitt Gateway Setup](https://github.com/Ghawken/EcowittWeather/wiki/Plugin-Configuration) | Configure your gateway to push data — app and web UI methods, per-model notes |
+| [Device Setup](https://github.com/Ghawken/EcowittWeather/wiki/Ecowitt-Gateway-Setup) | Creating Hub devices, PASSKEY routing, multiple gateways |
+| [Sensor States Reference](https://github.com/Ghawken/EcowittWeather/wiki/Sensor-States-Reference) | Complete list of all states by sensor category |
+| [Code Architecture](https://github.com/Ghawken/EcowittWeather/wiki/Code-Architecture) | How the plugin works — asyncio, dynamic states, unit priority |
+| [Troubleshooting](https://github.com/Ghawken/EcowittWeather/wiki/Troubleshooting) | Common problems and diagnostic steps |
 
 ---
 
