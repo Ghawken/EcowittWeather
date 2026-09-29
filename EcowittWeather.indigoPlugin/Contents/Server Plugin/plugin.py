@@ -73,6 +73,8 @@ IMPERIAL_VARIANT_KEYS: frozenset[str] = frozenset(
         "wrain_piezo", "mrain_piezo", "yrain_piezo", "last24hrain_piezo",
         "baromrelin", "baromabsin",
         "lightning_mi",
+        # WN38 Black Globe Thermometer — imperial (°F)
+        "bgt", "wbgt",
     ]
     + [f"temp{i}f"      for i in range(1, 9)]
     + [f"tf_ch{i}"      for i in range(1, 9)]
@@ -94,6 +96,8 @@ METRIC_VARIANT_KEYS: frozenset[str] = frozenset(
         "wrain_piezomm", "mrain_piezomm", "yrain_piezomm", "last24hrain_piezomm",
         "baromrelhpa", "baromabshpa",
         "lightning",
+        # WN38 Black Globe Thermometer — metric (°C)
+        "bgtc", "wbgtc",
     ]
     + [f"temp{i}c"      for i in range(1, 9)]
     + [f"tf_ch{i}c"     for i in range(1, 9)]
@@ -201,6 +205,12 @@ _S: dict[str, tuple[str, str]] = {
     "pm4_24h_co2":          ("pm4Co2Avg24h",         "float"),
     "pm10_co2":             ("pm10Co2",              "float"),
     "pm10_24h_co2":         ("pm10Co2Avg24h",        "float"),
+    # ── WN38 Black Globe Thermometer ─────────────────────────────────────────
+    "bgt":                  ("blackGlobeTemp",       "float"),   # Fahrenheit
+    "bgtc":                 ("blackGlobeTemp",       "float"),   # Celsius
+    "wbgt":                 ("wetBulbGlobeTemp",     "float"),   # Fahrenheit
+    "wbgtc":                ("wetBulbGlobeTemp",     "float"),   # Celsius
+    "bgtbatt":              ("bgtBatt",              "float"),
     # ── Lightning ────────────────────────────────────────────────────────────
     "lightning":            ("lightningDist",        "float"),
     "lightning_mi":         ("lightningDist",        "float"),
@@ -350,6 +360,10 @@ _D: list[tuple[str, str, str]] = [
     ("pm4Co2Avg24h",        "float",  "PM4 24h Average (WH46)"),
     ("pm10Co2",             "float",  "PM10 (WH45)"),
     ("pm10Co2Avg24h",       "float",  "PM10 24h Average (WH45)"),
+    # ── WN38 Black Globe Thermometer ─────────────────────────────────────────
+    ("blackGlobeTemp",      "float",  "Black Globe Temperature"),
+    ("wetBulbGlobeTemp",    "float",  "Wet Bulb Globe Temperature (WBGT)"),
+    ("bgtBatt",             "float",  "WN38 Battery"),
     # ── Lightning ─────────────────────────────────────────────────────────────
     ("lightningDist",       "float",  "Lightning Distance"),
     ("lightningCount",      "float",  "Lightning Count"),
